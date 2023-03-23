@@ -1,0 +1,141 @@
+#root {
+  margin: 0px 200px;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  /* font-size: 2rem; */
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+h2 {
+  font-weight: 400;
+  font-size: 2.2rem;
+}
+h3 {
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+/* :where(.css-dev-only-do-not-override-ph9edi).ant-form-item
+  .ant-form-item-label
+  > label.ant-form-item-required:not(
+    .ant-form-item-required-mark-optional
+  )::before {
+  content: none;
+}
+:where(.css-dev-only-do-not-override-ph9edi).ant-input {
+  width: 100%;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+} */
+:where(.css-dev-only-do-not-override-ph9edi).ant-input {
+  width: 100%;
+  padding: 9px;
+  margin-top: 16px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  height: 40px;
+}
+
+.a {
+  display: flex;
+  justify-content: flex-end;
+}
+:where(.css-dev-only-do-not-override-ph9edi).ant-btn {
+  font-size: 15px;
+  height: 32px;
+  padding: 0px 13px;
+  border-radius: 6px;
+  margin: 10px;
+}
+.logOut {
+  padding: 0px 18px;
+  background-color: #ffffff;
+  color: #007bff;
+  border-radius: 16px;
+  border: 1px solid #007bff;
+  min-width: 56px;
+  font-size: 1.3rem;
+  align-items: center;
+  cursor: pointer;
+}
+.listButton {
+  margin: 10px;
+  /* display: flex; */
+}
+span.filter {
+  font-size: 20px;
+  margin-right: 100px;
+}
+.listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn {
+  width: 50px;
+  height: 37px;
+  padding: 4px;
+}
+.listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn.open {
+  background-color: #28a745;
+}
+.listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn.close {
+  background-color: #17a2b8;
+}
+.b {
+  display: flex;
+  margin: 20px 0;
+}
+:where(.css-dev-only-do-not-override-ph9edi).ant-form-vertical
+  .ant-form-item-label
+  > label {
+  font-size: 18px;
+}
+:where(.css-dev-only-do-not-override-ph9edi).ant-select-single:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  height: 40px;
+}
+:where(
+    .css-dev-only-do-not-override-ph9edi
+  ).ant-select-single.ant-select-show-arrow
+  .ant-select-selection-item {
+  font-size: 16px;
+  text-align: left;
+}
+.issue {
+  display: flex;
+  justify-content: space-between;
+}
