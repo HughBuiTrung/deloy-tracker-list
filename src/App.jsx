@@ -1,12 +1,12 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
-import ReactTrackerList from "./component/ReactTrackerList/ReactTrackerList";
+
+// components
+import { Dashboard } from "./pages/Dashboard";
 
 function App() {
   return (
     <div className="App">
-      <ReactTrackerList />
+      <Dashboard />
     </div>
   );
 }
