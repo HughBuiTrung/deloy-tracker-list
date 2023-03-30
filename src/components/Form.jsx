@@ -6,7 +6,7 @@ import { useAppContext } from "../context/AppContext";
 
 export default function FormComponent({ addTodo }) { 
   // hooks
-  const { messageApi } = useAppContext();
+  const { setIsLoading, messageApi } = useAppContext();
   const [form] = Form.useForm();
 
   const onFinish = (value) => {
@@ -23,12 +23,7 @@ export default function FormComponent({ addTodo }) {
       return;
     }  
 
-    messageApi
-      .open({
-        type: "loading",
-        // content: "Action in progress..",
-        duration: 0.5,
-      })
+    setIsLoading(true);
     
     fetch("https://jsonplaceholder.typicode.com/todos", {
       method: "POST",
@@ -43,15 +38,15 @@ export default function FormComponent({ addTodo }) {
     })
       .then((response) => response.json())
       .then(data => {
+        setIsLoading(false);
         form.resetFields();
         addTodo(data);
-        messageApi
-          .open({
-            // type: "loading",
-            // content: "Action in progress..",
-            duration: 0.5,
-          })
-          .then(() => message.info("Add Successfully!", 5));
+
+        // show message
+        messageApi.open({
+          type: 'success',
+          content: 'Add Todo Successfully!',
+        });
       })
   };
 

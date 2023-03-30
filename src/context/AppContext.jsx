@@ -1,19 +1,31 @@
 import React from 'react';
-import { message } from "antd";
+import { message, Spin } from "antd";
 
 const AppContext = React.createContext();
 
 export const AppProvider = ({ children }) => {
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   return (
     <AppContext.Provider 
       value={{
-        messageApi
+        // states
+        messageApi,
+
+        // actions
+        setIsLoading
       }}
     >
       {children}
       {contextHolder}
+
+      {isLoading && (
+        <div className="spin">
+          <Spin />
+        </div>
+      )}
+     
     </AppContext.Provider>
   )
 }

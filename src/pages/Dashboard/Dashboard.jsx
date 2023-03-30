@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Input, Card, Col, Row } from "antd";
 // componens
 import FormComponent from "../../components/Form";
@@ -7,24 +7,22 @@ import Header from "../../components/Header";
 export default function Dashboard() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
-  const [render, setRender] = useState([]);
+  const [filteredTodo, setFilteredTodo] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
 
   // initial todos
   React.useEffect(() => {
-    console.log("useEffect");
     fetch("https://jsonplaceholder.typicode.com/todos?_limit=10&_page=1")
       .then((response) => response.json())
       .then((data) => {
         setTodos(data);
-        setRender(data);
+        setFilteredTodo(data);
       });
   }, []);
 
   // Search Input
-  useLayoutEffect(() => {
-    console.log("run Input Uselayout Effect");
-    const cloneRender = [...render];
+  React.useEffect(() => {
+    const cloneRender = [...filteredTodo];
     const inputSearch = cloneRender.filter(
       (x) => x.title.toLowerCase().indexOf(input.toLowerCase()) !== -1
     );
@@ -32,9 +30,8 @@ export default function Dashboard() {
   }, [input]);
 
   // =====
-  useLayoutEffect(() => {
-    console.log("effectlayout handle");
-    const cloneRender = [...render];
+  React.useEffect(() => {
+    const cloneRender = [...filteredTodo];
     const completedTodos = cloneRender.filter(
       (x) => x.completed === isCompleted
     );
@@ -43,33 +40,19 @@ export default function Dashboard() {
 
   // Completed
   function handleCompleteTodo(todoId) {
-    console.log("handleCompleteTodo====================");
     const cloneTodos = [...todos];
     const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
-    console.log("todoIndex : ", todoIndex);
-    const arr = cloneTodos.find((x) => x.id === todoId);
-    arr.completed = true;
-    cloneTodos.splice(todoIndex, 1, arr);
+    cloneTodos[todoIndex].completed = true;
     setTodos(cloneTodos);
-    console.log("render: ", render);
-    console.log("todos: ", todos);
-    // const cloneTodos = [...todos];
-    // const arr = cloneTodos.find((x) => x.id === todoId);
-    // arr.completed = true;
-    // cloneTodos.splice(index, 1, arr);
-    // setTodos(cloneTodos);
-    // console.log("render: ", render);
-    // console.log("todos: ", todos);
   }
 
-  console.log("todo: ", todos);
   // Delete
   function handleDeleteTodo(todoId) {
     const cloneTodos = [...todos];
     const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
     cloneTodos.splice(todoIndex, 1);
     setTodos(cloneTodos);
-    setRender(cloneTodos);
+    setFilteredTodo(cloneTodos);
   }
 
   // Search
@@ -79,7 +62,7 @@ export default function Dashboard() {
 
   // Button All
   function handleAll() {
-    setTodos(render);
+    setTodos(filteredTodo);
   }
   // Button Completed
 
@@ -94,7 +77,7 @@ export default function Dashboard() {
 
   function addTodo(data) {
     setTodos((prevState) => [data, ...prevState]);
-    setRender((prevState) => [data, ...prevState]);
+    setFilteredTodo((prevState) => [data, ...prevState]);
   }
 
   return (
@@ -127,7 +110,7 @@ export default function Dashboard() {
         </div>{" "}
       </div>
       <Row>
-        {todos.map((todo, index) => (
+        {todos.map((todo) => (
           <Col key={todo.id} span={24} style={{ marginTop: 10 }}>
             <Card
               title={<>Id: {todo.id}</>}
@@ -142,22 +125,6 @@ export default function Dashboard() {
                   >
                     Completed
                   </Button>
-                  {/* {todo.completed == true ? (
-                    <Button
-                      type="text"
-                      onClick={() => handleCompleteTodo(todo.id, index)}
-                      disabled
-                    >
-                      Completed
-                    </Button>
-                  ) : (
-                    <Button
-                      type="text"
-                      onClick={() => handleCompleteTodo(todo.id, index)}
-                    >
-                      Completed
-                    </Button>
-                  )} */}
                   <Button
                     type="text"
                     danger
