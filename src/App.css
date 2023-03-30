@@ -102,12 +102,12 @@ span.filter {
   margin-right: 100px;
 }
 .listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn {
-  width: 50px;
+  width: 95px;
   height: 37px;
   padding: 4px;
 }
 .listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn.open {
-  background-color: #28a745;
+  background-color: #df780a;
 }
 .listButton :where(.css-dev-only-do-not-override-ph9edi).ant-btn.close {
   background-color: #17a2b8;
