@@ -5,7 +5,7 @@ import FormComponent from "../../components/Form";
 import Header from "../../components/Header";
 
 export default function Dashboard() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
   const [render, setRender] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -25,21 +25,34 @@ export default function Dashboard() {
   useLayoutEffect(() => {
     console.log("run Input Uselayout Effect");
     const cloneRender = [...render];
-    const inputSearch = cloneRender.filter((x) => x.title.toLowerCase().indexOf(input.toLowerCase()) !== -1);
+    const inputSearch = cloneRender.filter(
+      (x) => x.title.toLowerCase().indexOf(input.toLowerCase()) !== -1
+    );
     setTodos(inputSearch);
   }, [input]);
-
 
   // =====
   useLayoutEffect(() => {
     console.log("effectlayout handle");
     const cloneRender = [...render];
-    const completedTodos = cloneRender.filter((x) => x.completed === isCompleted);
+    const completedTodos = cloneRender.filter(
+      (x) => x.completed === isCompleted
+    );
     setTodos(completedTodos);
   }, [isCompleted]);
 
   // Completed
   function handleCompleteTodo(todoId) {
+    console.log("handleCompleteTodo====================");
+    const cloneTodos = [...todos];
+    const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
+    console.log("todoIndex : ", todoIndex);
+    const arr = cloneTodos.find((x) => x.id === todoId);
+    arr.completed = true;
+    cloneTodos.splice(todoIndex, 1, arr);
+    setTodos(cloneTodos);
+    console.log("render: ", render);
+    console.log("todos: ", todos);
     // const cloneTodos = [...todos];
     // const arr = cloneTodos.find((x) => x.id === todoId);
     // arr.completed = true;
@@ -49,7 +62,7 @@ export default function Dashboard() {
     // console.log("todos: ", todos);
   }
 
-  console.log('todo: ', todos)
+  console.log("todo: ", todos);
   // Delete
   function handleDeleteTodo(todoId) {
     const cloneTodos = [...todos];
@@ -80,16 +93,14 @@ export default function Dashboard() {
   }
 
   function addTodo(data) {
-    setTodos(prevState => [data, ...prevState]);
-    setRender(prevState => [data, ...prevState])
+    setTodos((prevState) => [data, ...prevState]);
+    setRender((prevState) => [data, ...prevState]);
   }
 
   return (
     <div>
       <Header />
-      <FormComponent
-        addTodo={addTodo}  
-      />
+      <FormComponent addTodo={addTodo} />
 
       <hr />
       <div className="listButton">
@@ -124,7 +135,9 @@ export default function Dashboard() {
                 <>
                   <Button
                     type="text"
-                    onClick={todo.completed ? null : () => handleCompleteTodo(todo.id)}
+                    onClick={
+                      todo.completed ? null : () => handleCompleteTodo(todo.id)
+                    }
                     disabled={todo.completed}
                   >
                     Completed
