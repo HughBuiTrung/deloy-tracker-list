@@ -1,48 +1,59 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Space, Select, message } from "antd";
-export default function FormComponent() {
+
+// context
+import { useAppContext } from "../context/AppContext";
+
+export default function FormComponent({ addTodo }) { 
+  // hooks
+  const { messageApi } = useAppContext();
   const [form] = Form.useForm();
-  const [valueInput, setValueInput] = useState();
-  console.log("valueInput: ", valueInput);
+
   const onFinish = (value) => {
-    console.log("value Des: ", value.Des);
-    if (value.Des === undefined || value.Des === "") {
+    const { description } = value;
+
+    if (!description) {
       messageApi
         .open({
           type: "loading",
           // content: "Action in progress..",
-          duration: 2.5,
+          duration: 0.5,
         })
-        .then(() => message.error("Please enter Todo Description", 2.5));
-    } else {
-      messageApi
-        .open({
-          type: "loading",
-          // content: "Action in progress..",
-          duration: 2.5,
-        })
-        .then(() => message.success("Add Todo finished", 2.5));
-      Add(value);
-    }
-  };
-  function Add(value) {
-    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10&_page=1", {
+        .then(() => message.error("Please enter Todo Description", 2));
+      return;
+    }  
+
+    messageApi
+      .open({
+        type: "loading",
+        // content: "Action in progress..",
+        duration: 0.5,
+      })
+    
+    fetch("https://jsonplaceholder.typicode.com/todos", {
       method: "POST",
       body: JSON.stringify({
         completed: false,
-        id: 11,
-        title: value.Des,
-        userId: 1,
+        title: description,
+        userId: Date.now(),
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
       .then((response) => response.json())
-      .then((json) => setValueInput(json));
-  }
-  // Messages
-  const [messageApi, contextHolder] = message.useMessage();
+      .then(data => {
+        form.resetFields();
+        addTodo(data);
+        messageApi
+          .open({
+            // type: "loading",
+            // content: "Action in progress..",
+            duration: 0.5,
+          })
+          .then(() => message.info("Add Successfully!", 5));
+      })
+  };
 
   return (
     <>
@@ -53,17 +64,11 @@ export default function FormComponent() {
         autoComplete="off"
         className="form"
       >
-        <Form.Item name="Des" label="Todo Description ">
+        <Form.Item name="description" label="Todo Description ">
           <Input placeholder="Describe the issue" />
         </Form.Item>{" "}
-        <Form.Item name="Sev" label="Status">
-          <Select allowClear defaultValue="Incomplete">
-            <Option value="incomplete">Incomplete</Option>
-          </Select>
-        </Form.Item>
         <Form.Item>
           <Space className="a">
-            {contextHolder}
             <Button type="primary" htmlType="submit">
               Add
             </Button>

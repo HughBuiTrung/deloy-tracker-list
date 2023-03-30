@@ -5,10 +5,10 @@ import FormComponent from "../../components/Form";
 import Header from "../../components/Header";
 
 export default function Dashboard() {
-  const [input, setInput] = useState([]);
+  const [input, setInput] = useState('');
   const [todos, setTodos] = useState([]);
   const [render, setRender] = useState([]);
-  const [complete, setComplete] = useState([]);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   // initial todos
   React.useEffect(() => {
@@ -16,78 +16,81 @@ export default function Dashboard() {
     fetch("https://jsonplaceholder.typicode.com/todos?_limit=10&_page=1")
       .then((response) => response.json())
       .then((data) => {
-        return setTodos(data), setRender(data);
+        setTodos(data);
+        setRender(data);
       });
   }, []);
+
   // Search Input
   useLayoutEffect(() => {
     console.log("run Input Uselayout Effect");
     const cloneRender = [...render];
-    const inputSearch = cloneRender.filter((x) => x.title.includes(input));
+    const inputSearch = cloneRender.filter((x) => x.title.toLowerCase().indexOf(input.toLowerCase()) !== -1);
     setTodos(inputSearch);
-    console.log("todossssss", todos);
   }, [input]);
+
+
   // =====
   useLayoutEffect(() => {
     console.log("effectlayout handle");
     const cloneRender = [...render];
-    const completedTodos = cloneRender.filter((x) => x.completed === complete);
-    console.log("test:   ", cloneRender);
+    const completedTodos = cloneRender.filter((x) => x.completed === isCompleted);
     setTodos(completedTodos);
-    console.log("render: ", render);
-    console.log("todos: ", todos);
-  }, [complete]);
+  }, [isCompleted]);
+
   // Completed
-  function handleCompleteTodo(todoId, index) {
-    const cloneTodos = [...todos];
-    const arr = cloneTodos.find((x) => x.id === todoId);
-    arr.completed = true;
-    cloneTodos.splice(index, 1, arr);
-    setTodos(cloneTodos);
-    console.log("render: ", render);
-    console.log("todos: ", todos);
+  function handleCompleteTodo(todoId) {
+    // const cloneTodos = [...todos];
+    // const arr = cloneTodos.find((x) => x.id === todoId);
+    // arr.completed = true;
+    // cloneTodos.splice(index, 1, arr);
+    // setTodos(cloneTodos);
+    // console.log("render: ", render);
+    // console.log("todos: ", todos);
   }
+
+  console.log('todo: ', todos)
   // Delete
-  function handleDeleteTodo(index) {
-    console.log(index);
+  function handleDeleteTodo(todoId) {
     const cloneTodos = [...todos];
-    const deleTodo = cloneTodos[index];
-    console.log("deletodo: ", deleTodo);
-    cloneTodos.splice(index, 1);
+    const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
+    cloneTodos.splice(todoIndex, 1);
     setTodos(cloneTodos);
     setRender(cloneTodos);
   }
-  // Form
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+
   // Search
   function handleOnChange(event) {
     setInput(event.target.value);
   }
-  // Filter Button
 
   // Button All
   function handleAll() {
-    console.log("AAAAA");
     setTodos(render);
   }
   // Button Completed
 
   function handleCompleted() {
-    setComplete(true);
-    console.log("comp: ", complete);
+    setIsCompleted(true);
   }
   // Button incomplete
 
   function handleIncompleted() {
-    setComplete(false);
-    console.log("comp: ", complete);
+    setIsCompleted(false);
   }
+
+  function addTodo(data) {
+    setTodos(prevState => [data, ...prevState]);
+    setRender(prevState => [data, ...prevState])
+  }
+
   return (
     <div>
       <Header />
-      <FormComponent />
+      <FormComponent
+        addTodo={addTodo}  
+      />
+
       <hr />
       <div className="listButton">
         <div className="issue">
@@ -119,7 +122,14 @@ export default function Dashboard() {
               title={<>Id: {todo.id}</>}
               extra={
                 <>
-                  {todo.completed == true ? (
+                  <Button
+                    type="text"
+                    onClick={todo.completed ? null : () => handleCompleteTodo(todo.id)}
+                    disabled={todo.completed}
+                  >
+                    Completed
+                  </Button>
+                  {/* {todo.completed == true ? (
                     <Button
                       type="text"
                       onClick={() => handleCompleteTodo(todo.id, index)}
@@ -134,11 +144,11 @@ export default function Dashboard() {
                     >
                       Completed
                     </Button>
-                  )}
+                  )} */}
                   <Button
                     type="text"
                     danger
-                    onClick={() => handleDeleteTodo(index)}
+                    onClick={() => handleDeleteTodo(todo.id)}
                   >
                     Delete
                   </Button>
