@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Input, Card, Col, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Card, Col, Row, Pagination } from "antd";
 // componens
 import FormComponent from "../../components/Form";
 import Header from "../../components/Header";
@@ -8,11 +8,12 @@ export default function Dashboard() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
   const [filteredTodo, setFilteredTodo] = useState([]);
-  const [isCompleted, setIsCompleted] = useState(false);
-
+  // const [isCompleted, setIsCompleted] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postPerPage, setPostPerPage] = useState(10);
   // initial todos
   React.useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10&_page=1")
+    fetch("https://jsonplaceholder.typicode.com/todos")
       .then((response) => response.json())
       .then((data) => {
         setTodos(data);
@@ -28,15 +29,15 @@ export default function Dashboard() {
     );
     setTodos(inputSearch);
   }, [input]);
-
   // =====
-  React.useEffect(() => {
-    const cloneRender = [...filteredTodo];
-    const completedTodos = cloneRender.filter(
-      (x) => x.completed === isCompleted
-    );
-    setTodos(completedTodos);
-  }, [isCompleted]);
+  // =====
+  // React.useEffect(() => {
+  //   const cloneRender = [...filteredTodo];
+  //   const completedTodos = cloneRender.filter(
+  //     (x) => x.completed === isCompleted
+  //   );
+  //   setTodos(completedTodos);
+  // }, [isCompleted]);
 
   // Completed
   function handleCompleteTodo(todoId) {
@@ -52,7 +53,13 @@ export default function Dashboard() {
     const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
     cloneTodos.splice(todoIndex, 1);
     setTodos(cloneTodos);
-    setFilteredTodo(cloneTodos);
+    // setFilteredTodo(cloneTodos);
+    const clonefilteredTodo = [...filteredTodo];
+    const todoIndexFilteredTodo = clonefilteredTodo.findIndex(
+      (x) => x.id === todoId
+    );
+    clonefilteredTodo.splice(todoIndexFilteredTodo, 1);
+    setFilteredTodo(clonefilteredTodo);
   }
 
   // Search
@@ -62,24 +69,51 @@ export default function Dashboard() {
 
   // Button All
   function handleAll() {
+    // setIsCompleted();
     setTodos(filteredTodo);
   }
   // Button Completed
 
   function handleCompleted() {
-    setIsCompleted(true);
+    // setIsCompleted(true);
+    const isCompleted = true;
+    const cloneRender = [...filteredTodo];
+    const completedTodos = cloneRender.filter(
+      (x) => x.completed === isCompleted
+    );
+    setTodos(completedTodos);
   }
   // Button incomplete
 
   function handleIncompleted() {
-    setIsCompleted(false);
+    // setIsCompleted(false);
+    const isCompleted = false;
+    const cloneRender = [...filteredTodo];
+    const completedTodos = cloneRender.filter(
+      (x) => x.completed === isCompleted
+    );
+    setTodos(completedTodos);
   }
 
   function addTodo(data) {
     setTodos((prevState) => [data, ...prevState]);
     setFilteredTodo((prevState) => [data, ...prevState]);
   }
-
+  useEffect(() => {
+    const lastPostIndex = currentPage * postPerPage;
+    const firstPostIndex = lastPostIndex - postPerPage;
+    const currentPosts = todos.slice(firstPostIndex, lastPostIndex);
+    setTodos(currentPosts);
+  }, [currentPage]);
+  function handleChangePage(current) {
+    setTodos(filteredTodo);
+    console.log(filteredTodo);
+    console.log(todos);
+    console.log(current);
+    setCurrentPage(current);
+  }
+  // const pageNumber = filteredTodo.length / postPerPage;
+  // console.log(pageNumber);
   return (
     <div>
       <Header />
@@ -110,6 +144,12 @@ export default function Dashboard() {
         </div>{" "}
       </div>
       <Row>
+        <Pagination
+          defaultCurrent={1}
+          total={filteredTodo.length}
+          onChange={handleChangePage}
+        />
+
         {todos.map((todo) => (
           <Col key={todo.id} span={24} style={{ marginTop: 10 }}>
             <Card
