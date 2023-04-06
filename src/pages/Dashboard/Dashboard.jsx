@@ -9,9 +9,11 @@ export default function Dashboard() {
   const [todos, setTodos] = useState([]);
   const [filteredTodo, setFilteredTodo] = useState([]);
   // const [isCompleted, setIsCompleted] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [postPerPage, setPostPerPage] = useState(10);
-  // initial todos
+  const [todoRender, setTodoRender] = useState("");
+  const [lengthTodos, setLengthTodos] = useState(filteredTodo.length);
+
   React.useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/todos")
       .then((response) => response.json())
@@ -19,6 +21,13 @@ export default function Dashboard() {
         setTodos(data);
         setFilteredTodo(data);
       });
+  }, []);
+
+  // Set Page
+  useEffect(() => {
+    setTimeout(() => {
+      setCurrentPage(1);
+    }, 1000);
   }, []);
 
   // Search Input
@@ -29,15 +38,21 @@ export default function Dashboard() {
     );
     setTodos(inputSearch);
   }, [input]);
-  // =====
-  // =====
-  // React.useEffect(() => {
-  //   const cloneRender = [...filteredTodo];
-  //   const completedTodos = cloneRender.filter(
-  //     (x) => x.completed === isCompleted
-  //   );
-  //   setTodos(completedTodos);
-  // }, [isCompleted]);
+  // Pages
+  useEffect(() => {
+    test();
+  }, [currentPage]);
+
+  useEffect(() => {
+    test();
+  }, [todoRender]);
+
+  function test() {
+    const lastPostIndex = currentPage * postPerPage;
+    const firstPostIndex = lastPostIndex - postPerPage;
+    const currentPosts = todos.slice(firstPostIndex, lastPostIndex);
+    setTodos(currentPosts);
+  }
 
   // Completed
   function handleCompleteTodo(todoId) {
@@ -53,7 +68,6 @@ export default function Dashboard() {
     const todoIndex = cloneTodos.findIndex((x) => x.id === todoId);
     cloneTodos.splice(todoIndex, 1);
     setTodos(cloneTodos);
-    // setFilteredTodo(cloneTodos);
     const clonefilteredTodo = [...filteredTodo];
     const todoIndexFilteredTodo = clonefilteredTodo.findIndex(
       (x) => x.id === todoId
@@ -69,51 +83,58 @@ export default function Dashboard() {
 
   // Button All
   function handleAll() {
-    // setIsCompleted();
+    setCurrentPage(1);
+    setTodoRender("all");
     setTodos(filteredTodo);
+    setLengthTodos(filteredTodo.length);
   }
-  // Button Completed
 
+  // Button Completed
   function handleCompleted() {
-    // setIsCompleted(true);
+    setCurrentPage(1);
+    setTodoRender("completed");
     const isCompleted = true;
     const cloneRender = [...filteredTodo];
     const completedTodos = cloneRender.filter(
       (x) => x.completed === isCompleted
     );
     setTodos(completedTodos);
+    setLengthTodos(completedTodos.length);
   }
-  // Button incomplete
 
+  // Button incomplete
   function handleIncompleted() {
-    // setIsCompleted(false);
+    setCurrentPage(1);
+    setTodoRender("incompleted");
     const isCompleted = false;
     const cloneRender = [...filteredTodo];
     const completedTodos = cloneRender.filter(
       (x) => x.completed === isCompleted
     );
     setTodos(completedTodos);
+    setLengthTodos(completedTodos.length);
   }
-
   function addTodo(data) {
     setTodos((prevState) => [data, ...prevState]);
     setFilteredTodo((prevState) => [data, ...prevState]);
   }
-  useEffect(() => {
-    const lastPostIndex = currentPage * postPerPage;
-    const firstPostIndex = lastPostIndex - postPerPage;
-    const currentPosts = todos.slice(firstPostIndex, lastPostIndex);
-    setTodos(currentPosts);
-  }, [currentPage]);
+
   function handleChangePage(current) {
-    setTodos(filteredTodo);
-    console.log(filteredTodo);
-    console.log(todos);
-    console.log(current);
-    setCurrentPage(current);
+    if (todoRender === "all" || todoRender === "") {
+      setTodos(filteredTodo);
+      setCurrentPage(current);
+      console.log("testtttt: ", todoRender);
+    }
+    if (todoRender === "incompleted") {
+      handleIncompleted();
+      setCurrentPage(current);
+    }
+    if (todoRender === "completed") {
+      handleCompleted();
+      setCurrentPage(current);
+    }
   }
-  // const pageNumber = filteredTodo.length / postPerPage;
-  // console.log(pageNumber);
+
   return (
     <div>
       <Header />
@@ -145,8 +166,9 @@ export default function Dashboard() {
       </div>
       <Row>
         <Pagination
+          current={currentPage}
           defaultCurrent={1}
-          total={filteredTodo.length}
+          total={todoRender === "" ? filteredTodo.length : lengthTodos}
           onChange={handleChangePage}
         />
 
