@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Card, Col, Row, Pagination } from "antd";
+import { Row } from "antd";
 // componens
 import FormComponent from "../../components/Form";
 import Header from "../../components/Header";
+import Pagi from "../../components/Pagination";
+import InputSearch from "../../components/InputSearch";
+import ButtonList from "../../components/ButtonList";
+import TodoList from "../../components/TodoList";
 
 export default function Dashboard() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
   const [filteredTodo, setFilteredTodo] = useState([]);
-  // const [isCompleted, setIsCompleted] = useState();
   const [currentPage, setCurrentPage] = useState(0);
   const [postPerPage, setPostPerPage] = useState(10);
   const [todoRender, setTodoRender] = useState("");
@@ -139,69 +142,28 @@ export default function Dashboard() {
     <div>
       <Header />
       <FormComponent addTodo={addTodo} />
-
       <hr />
       <div className="listButton">
-        <div className="issue">
-          <h3>List Issue</h3>
-          <Input
-            onChange={handleOnChange}
-            value={input}
-            style={{ width: 200 }}
-            placeholder=" Search by description"
-          />
-        </div>
-        <div className="filterBy">
-          <span className="filter">Filter:</span>{" "}
-          <Button type="primary" onClick={handleAll}>
-            All
-          </Button>
-          <Button className="open" type="primary" onClick={handleIncompleted}>
-            Incomplete
-          </Button>
-          <Button className="close" type="primary" onClick={handleCompleted}>
-            Completed
-          </Button>
-        </div>{" "}
+        <InputSearch handleOnChange={handleOnChange} input={input} />
+        <ButtonList
+          handleAll={handleAll}
+          handleIncompleted={handleIncompleted}
+          handleCompleted={handleCompleted}
+        />
       </div>
       <Row>
-        <Pagination
-          current={currentPage}
-          defaultCurrent={1}
-          total={todoRender === "" ? filteredTodo.length : lengthTodos}
-          onChange={handleChangePage}
+        <Pagi
+          currentPage={currentPage}
+          todoRender={todoRender}
+          filteredTodo={filteredTodo}
+          lengthTodos={lengthTodos}
+          handleChangePage={handleChangePage}
         />
-
-        {todos.map((todo) => (
-          <Col key={todo.id} span={24} style={{ marginTop: 10 }}>
-            <Card
-              title={<>Id: {todo.id}</>}
-              extra={
-                <>
-                  <Button
-                    type="text"
-                    onClick={
-                      todo.completed ? null : () => handleCompleteTodo(todo.id)
-                    }
-                    disabled={todo.completed}
-                  >
-                    Completed
-                  </Button>
-                  <Button
-                    type="text"
-                    danger
-                    onClick={() => handleDeleteTodo(todo.id)}
-                  >
-                    Delete
-                  </Button>
-                </>
-              }
-            >
-              {todo.title}
-              {todo.completed}
-            </Card>
-          </Col>
-        ))}
+        <TodoList
+          todos={todos}
+          handleCompleteTodo={handleCompleteTodo}
+          handleDeleteTodo={handleDeleteTodo}
+        />
       </Row>
     </div>
   );
