@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row } from "antd";
+import { Pagination } from "antd";
+
 // componens
 import FormComponent from "../../components/Form";
 import Header from "../../components/Header";
@@ -16,15 +18,28 @@ export default function Dashboard() {
   const [postPerPage, setPostPerPage] = useState(10);
   const [todoRender, setTodoRender] = useState("");
   const [lengthTodos, setLengthTodos] = useState(filteredTodo.length);
+  const [page, setPage] = useState(1);
+   
+  // pagiantion from FE
+  // React.useEffect(() => {
+  //   fetch("https://jsonplaceholder.typicode.com/todos")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setTodos(data);
+  //       setFilteredTodo(data);
+  //     });
+  // }, []);
 
+  // pagination from BE
   React.useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/todos")
+    fetch(`https://jsonplaceholder.typicode.com/todos?_limit=10&_page=${page}`)
       .then((response) => response.json())
       .then((data) => {
         setTodos(data);
         setFilteredTodo(data);
       });
-  }, []);
+  }, [page]);
+
 
   // Set Page
   useEffect(() => {
@@ -152,12 +167,24 @@ export default function Dashboard() {
         />
       </div>
       <Row>
-        <Pagi
+
+        {/* pagination from FE */}
+        {/* <Pagi
           currentPage={currentPage}
           todoRender={todoRender}
           filteredTodo={filteredTodo}
           lengthTodos={lengthTodos}
           handleChangePage={handleChangePage}
+        /> */}
+
+        {/* pagination from BE */}
+        <Pagination
+          current={page}
+          defaultCurrent={page}
+          total={100}
+          onChange={(current) => {
+            setPage(current)
+          }}
         />
         <TodoList
           todos={todos}
